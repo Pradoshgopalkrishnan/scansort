@@ -17,6 +17,7 @@ def extract_images_from_pdf(pdf_path: str, output_dir: str = "extracted_images")
 
     seen_xrefs = set()
     extracted_count = 0
+    extracted_paths = []  # NEW: collects every saved file so the GUI can use them
 
     for page_index in range(len(doc)):
         page = doc[page_index]
@@ -39,7 +40,7 @@ def extract_images_from_pdf(pdf_path: str, output_dir: str = "extracted_images")
             seen_xrefs.add(xref)
 
             base_image = doc.extract_image(xref)
-            
+
             # Fix: The correct dictionary key for the binary data is "image", not "bytes"
             image_bytes = base_image["image"]
             image_ext = base_image["ext"]
@@ -52,10 +53,13 @@ def extract_images_from_pdf(pdf_path: str, output_dir: str = "extracted_images")
                 img_file.write(image_bytes)
 
             extracted_count += 1
+            extracted_paths.append(file_path)  # NEW: remember what we just saved
             print(f"  -> Saved: {filename} ({dimensions}, format: {image_ext})")
 
     doc.close()
     print(f"\n[DONE] Finished! Saved {extracted_count} unique image(s) to '{out_folder.resolve()}'")
+
+    return extracted_paths  # NEW: so callers (like the GUI) know what was extracted
 
 
 if __name__ == "__main__":
