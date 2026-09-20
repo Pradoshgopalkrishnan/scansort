@@ -6,3 +6,5 @@ digital_sample.docx
 extracted_images/
 venv/
 .venv/
+__pycache__
+ *.pyc
